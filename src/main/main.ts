@@ -10,10 +10,13 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import Store from 'electron-store';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+
+const storage = new Store();
 
 class AppUpdater {
   constructor() {
@@ -25,10 +28,12 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+ipcMain.handle('set-item', (_, { key, value }) => {
+  storage.set(key, value);
+});
+
+ipcMain.handle('get-item', (_, key) => {
+  return storage.get(key);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -75,6 +80,9 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      experimentalFeatures: true,
+      allowRunningInsecureContent: true,
+      nodeIntegration: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
