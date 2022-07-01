@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuthContext } from 'renderer/providers/AuthProvider';
-import app from '../config/appConfig';
 
-const Logout = () => {
-  const { currentUser } = useAuthContext();
+interface Props extends React.Props<any> {
+  setPending: (pending: boolean) => void;
+  pending: boolean;
+}
+const Logout = ({ setPending, pending }: Props) => {
+  const { currentUser, signOut } = useAuthContext();
 
   useEffect(() => {
-    app.auth().signOut();
+    setPending(false);
+    signOut();
   }, []);
-  console.log(currentUser);
   return !currentUser ? <Navigate to="/" /> : null;
 };
 

@@ -15,8 +15,8 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useAuthContext } from '../../providers/AuthProvider';
 
-const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = [];
 
 const ResponsiveAppBar = () => {
   const { currentUser } = useAuthContext();
@@ -42,6 +42,7 @@ const ResponsiveAppBar = () => {
   const handleNavigateTo = (path: string) => {
     handleCloseNavMenu();
     navigate(`/${path.toLocaleLowerCase()}`);
+    console.log(path);
   };
 
   return !currentUser ? (

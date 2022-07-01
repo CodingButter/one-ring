@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-const getSavedValue = async (key, initialValue) => {
-  const savedValue = window.electron.ipcRenderer.sendSync('get-item', key);
+const getSavedValue = (key, initialValue) => {
+  const savedValue = window.electron.store.get(key);
   if (savedValue) {
     return savedValue;
   }
@@ -13,7 +13,7 @@ const useElectronStore = (key, initialValue) => {
   const [value, setValue] = useState(() => getSavedValue(key, initialValue));
 
   useEffect(() => {
-    window.electron.ipcRenderer.send('set-item', { key, value });
+    window.electron.store.set(key, value);
   }, [value]);
 
   return [value, setValue];

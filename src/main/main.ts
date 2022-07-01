@@ -16,7 +16,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
-const storage = new Store();
+const store = new Store();
 
 class AppUpdater {
   constructor() {
@@ -28,12 +28,13 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.handle('set-item', (_, { key, value }) => {
-  storage.set(key, value);
+// IPC listener
+ipcMain.on('electron-store-get', async (event, val) => {
+  event.returnValue = store.get(val);
 });
 
-ipcMain.handle('get-item', (_, key) => {
-  return storage.get(key);
+ipcMain.on('electron-store-set', async (_, key, val) => {
+  store.set(key, val);
 });
 
 if (process.env.NODE_ENV === 'production') {
